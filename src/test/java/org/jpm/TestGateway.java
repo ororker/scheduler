@@ -22,7 +22,7 @@ public class TestGateway implements Gateway {
 	}
 
 	@Override
-	public void send(Message message) {
+	public void send(AbstractMessage message) {
 		LOG.info("Sending message to Gateway[{}]={}", id, message);
 		((TestMessage)message).getDurationToProcess().pause();
 		message.completed();

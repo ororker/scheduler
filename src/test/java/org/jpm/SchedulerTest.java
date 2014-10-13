@@ -1,6 +1,5 @@
 package org.jpm;
 
-import static org.mockito.Mockito.*;
 import junit.framework.TestCase;
 
 public class SchedulerTest extends TestCase {

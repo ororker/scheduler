@@ -1,6 +1,8 @@
 package org.jpm;
 
-public abstract class AbstractMessage extends Message {
+import java.util.Observable;
+
+public abstract class AbstractMessage extends Observable {
 
 	protected Object groupId;
 	

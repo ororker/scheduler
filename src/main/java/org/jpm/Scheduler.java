@@ -50,7 +50,7 @@ public class Scheduler implements Observer {
 		while (true) {
 			if (readyToProcess()) {
 				final Gateway gateway = gatewayPool.borrowGateway();
-				final Message message = messageStore.next();
+				final AbstractMessage message = messageStore.next();
 				message.addObserver(this);
 				
 				gatewayExecutorPool.execute( () -> gateway.send(message) );
