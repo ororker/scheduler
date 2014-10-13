@@ -1,14 +1,12 @@
 package org.jpm;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -17,27 +15,26 @@ import java.util.concurrent.Executors;
  */
 public class Scheduler implements Observer {
 	
+	private static final Logger LOG = LoggerFactory.getLogger(Scheduler.class);
+	
 	private MessageStore messageStore;
 	private GatewayPool gatewayPool;
 	private ExecutorService gatewayExecutorPool;
 	
 	public Scheduler() {
+		messageStore = new MessageStore();
+		gatewayPool = new GatewayPool();
 		gatewayExecutorPool = Executors.newCachedThreadPool();
 		
-		Executors.newSingleThreadExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				process();
-			}
-		});
+		Executors.newSingleThreadExecutor().execute( () -> process() );
 	}
 	
-	public synchronized void add(GatewayConfig... configs) {
+	public synchronized void add(Gateway... configs) {
 		gatewayPool.addAll(configs);
 		notifyAll();
 	}
 
-	public synchronized void schedule(Message... messages) {
+	public synchronized void schedule(AbstractMessage... messages) {
 		messageStore.addAll(messages);
 		notifyAll();
 	}
@@ -56,15 +53,14 @@ public class Scheduler implements Observer {
 				final Message message = messageStore.next();
 				message.addObserver(this);
 				
-				gatewayExecutorPool.execute(new Runnable() {
-					@Override
-					public void run() {
-						gateway.send(message);
-					}
-				});
+				gatewayExecutorPool.execute( () -> gateway.send(message) );
 				
 			} else {
-				wait();
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					LOG.error("Exception while waiting to process", e);
+				}
 			}
 		}
 	}

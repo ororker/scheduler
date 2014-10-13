@@ -1,6 +1,12 @@
 package org.jpm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Duration {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Duration.class);
+	
 	private static final int BUFFER_AFTER_INTERVAL = 1;
 	private static final int UNIT_OF_TIME_IN_MILLISSECS = 100;
 	
@@ -32,6 +38,16 @@ public class Duration {
 			throw new RuntimeException(e);
 		}
 		
+	}
+
+	public void pause() {
+		long milliSecs = interval * UNIT_OF_TIME_IN_MILLISSECS;
+		try {
+			Thread.sleep(milliSecs);
+		} catch (InterruptedException e) {
+			LOG.error("Failed to pause for {} millisecs", milliSecs, e);
+			throw new RuntimeException(e);
+		}
 	}
 
 }

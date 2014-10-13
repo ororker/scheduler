@@ -18,10 +18,10 @@ public class SchedulerTest extends TestCase {
 		Duration durationToProcess = new Duration(1);
 		TestMessage mesg = new TestMessage("A", durationToProcess);
 		
-		GatewayConfig config = new GatewayConfig("A");
+		TestGateway config = new TestGateway("A");
 		
-//		classUnderTest.addExternalResource(config);
-		classUnderTest.process(mesg);
+		classUnderTest.add(config);
+		classUnderTest.schedule(mesg);
 
 		durationToProcess.past();
 		

@@ -1,6 +1,6 @@
 package org.jpm;
 
-public abstract class AbstractMessage implements Message {
+public abstract class AbstractMessage extends Message {
 
 	protected Object groupId;
 	

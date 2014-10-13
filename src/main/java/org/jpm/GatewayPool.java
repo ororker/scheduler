@@ -1,16 +1,26 @@
 package org.jpm;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.concurrent.LinkedTransferQueue;
 
 public class GatewayPool {
 
-	private List<GatewayConfig> externalResourceConfigs = new ArrayList<GatewayConfig>();
+	private LinkedTransferQueue<Gateway> pool = new LinkedTransferQueue<Gateway>();
 	
-	Set<Gateway> gatewayPool = new HashSet<Gateway>();
-	Iterator<Gateway> gatewayPoolIt = gatewayPool.iterator();
+	public void addAll(Gateway... gateways) {
+		pool.addAll(Arrays.asList(gateways));
+	}
+
+	public Gateway borrowGateway() {
+		return pool.poll();
+	}
+
+	public void returnGateway(Gateway gateway) {
+		pool.add(gateway);
+	}
+
+	public boolean notEmpty() {
+		return ! pool.isEmpty();
+	}
 
 }

@@ -2,9 +2,9 @@ package org.jpm;
 
 public class ExternalResourceGateway implements Gateway {
 
-	private GatewayConfig config;
+	private TestGateway config;
 
-	public ExternalResourceGateway(GatewayConfig config) {
+	public ExternalResourceGateway(TestGateway config) {
 		this.config = config;
 	}
 
