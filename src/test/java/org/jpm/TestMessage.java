@@ -25,6 +25,8 @@ public class TestMessage extends AbstractMessage {
 			throw new IllegalStateException("completed() must only be called once");
 		}
 		completed = new Date();
+		this.setChanged();
+		this.notifyObservers(getGateway());
 	}
 
 	public boolean isCompleted() {
@@ -39,5 +41,8 @@ public class TestMessage extends AbstractMessage {
 		this.durationToProcess = durationToProcess;
 	}
 
+	public Date getCompletedDate() {
+		return completed;
+	}
 	
 }

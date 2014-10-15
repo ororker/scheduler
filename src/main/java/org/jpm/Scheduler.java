@@ -8,11 +8,6 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * Hello world!
- *
- */
 public class Scheduler implements Observer {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(Scheduler.class);
@@ -50,7 +45,8 @@ public class Scheduler implements Observer {
 		while (true) {
 			if (readyToProcess()) {
 				final Gateway gateway = gatewayPool.borrowGateway();
-				final AbstractMessage message = messageStore.next();
+				final AbstractMessage message = messageStore.next(gateway.getLastMessageSent());
+				message.setGateway(gateway);
 				message.addObserver(this);
 				
 				gatewayExecutorPool.execute( () -> gateway.send(message) );

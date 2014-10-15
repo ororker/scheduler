@@ -21,15 +21,17 @@ public class MessageStore {
 	}
 
 
-	public AbstractMessage next(AbstractMessage m) {
+	public AbstractMessage next(AbstractMessage lastMessageSent) {
 		AbstractMessage next = null;
-		
-		Object groupId = m.getGroupId();
-		Collection<AbstractMessage> groupMessageList = groupedMessageMap.getCollection(groupId);
-		if (groupMessageList != null) {
-			Optional<AbstractMessage> firstMessageFromGroup = groupMessageList.stream().findFirst();
-			if (firstMessageFromGroup.isPresent()) {
-				next = firstMessageFromGroup.get();
+
+		if (lastMessageSent != null) {
+			Object groupId = lastMessageSent.getGroupId();
+			Collection<AbstractMessage> groupMessageList = groupedMessageMap.getCollection(groupId);
+			if (groupMessageList != null) {
+				Optional<AbstractMessage> firstMessageFromGroup = groupMessageList.stream().findFirst();
+				if (firstMessageFromGroup.isPresent()) {
+					next = firstMessageFromGroup.get();
+				}
 			}
 		}
 		
@@ -44,7 +46,7 @@ public class MessageStore {
 	
 	private void remove(AbstractMessage message) {
 		if (message != null) {
-			groupedMessageMap.remove(message);
+			groupedMessageMap.removeMapping(message.getGroupId(), message);
 			messageQueue.remove(message);
 		}
 	}
