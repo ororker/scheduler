@@ -41,6 +41,9 @@ public class Scheduler implements Observer {
 		notifyAll();
 	}
 	
+	/**
+	 * Invoked on a new thread
+	 */
 	private synchronized void process() {
 		while (true) {
 			if (readyToProcess()) {
@@ -63,6 +66,10 @@ public class Scheduler implements Observer {
 	
 	private boolean readyToProcess() {
 		return gatewayPool.notEmpty() && messageStore.hasNext();
+	}
+
+	public synchronized void cancelMessagesForGroup(Object group) {
+		messageStore.cancelMessagesForGroup(group);
 	}
 	
 }

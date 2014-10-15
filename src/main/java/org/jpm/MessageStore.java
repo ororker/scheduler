@@ -1,5 +1,6 @@
 package org.jpm;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -59,6 +60,12 @@ public class MessageStore {
 
 	public boolean hasNext() {
 		return ! messageQueue.isEmpty();
+	}
+
+
+	public void cancelMessagesForGroup(Object groupId) {
+		Collection<AbstractMessage> groupMessageList = new ArrayList<AbstractMessage>(groupedMessageMap.getCollection(groupId));
+		groupMessageList.forEach( (p) -> remove(p));
 	}
 
 }

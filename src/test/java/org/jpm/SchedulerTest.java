@@ -43,7 +43,7 @@ public class SchedulerTest extends TestCase {
 				new TestMessage(group(1), defaultDurationToProcess),
 				new TestMessage(group(1), defaultDurationToProcess),
 				new TestMessage(group(1), defaultDurationToProcess),
-				new TestMessage(group(1), defaultDurationToProcess),
+				new TestMessage(group(1), defaultDurationToProcess)
 		};
 		printMessages(mesgs);
 
@@ -65,7 +65,7 @@ public class SchedulerTest extends TestCase {
 				new TestMessage(group(2), defaultDurationToProcess),
 				new TestMessage(group(1), defaultDurationToProcess),
 				new TestMessage(group(2), defaultDurationToProcess),
-				new TestMessage(group(3), defaultDurationToProcess),
+				new TestMessage(group(3), defaultDurationToProcess)
 		};
 		printMessages(mesgs);
 
@@ -82,6 +82,35 @@ public class SchedulerTest extends TestCase {
 				mesgs[0], mesgs[2], mesgs[1], mesgs[3]
 		};
 		assertMessageOrder(correctOrderOfMessages);
+	}
+
+	public void testCancellingMessageAfterTerminationMessage() {
+		
+		TestMessage[] mesgs = new TestMessage[] {
+				new TestMessage(group(2), defaultDurationToProcess),
+				new TestMessage(group(1), defaultDurationToProcess),
+				new TestMessage(group(2), defaultDurationToProcess),
+				new TestMessage(group(3), defaultDurationToProcess)
+		};
+		
+		printMessages(mesgs);
+
+		TestGateway config = new TestGateway("A");
+		
+		classUnderTest.add(config);
+		classUnderTest.schedule(mesgs);
+		classUnderTest.cancelMessagesForGroup(group(3));
+
+		waitForMessagesToBeProcessed(mesgs);
+		
+		assertAllMessagesComplete(new TestMessage[] {mesgs[0], mesgs[1], mesgs[2]});
+		assertFalse("Message for group 3 should not have been processed", mesgs[3].isCompleted());
+		
+		TestMessage[] correctOrderOfMessages = new TestMessage[] {
+				mesgs[0], mesgs[2], mesgs[1]
+		};
+		assertMessageOrder(correctOrderOfMessages);
+
 	}
 
 	private void printMessages(TestMessage... mesgs) {
